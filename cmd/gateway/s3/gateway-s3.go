@@ -19,6 +19,7 @@ package s3
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"math/rand"
 	"net/http"
@@ -221,7 +222,7 @@ func (g *S3) NewGatewayLayer(creds auth.Credentials) (minio.ObjectLayer, error) 
 	}
 
 	probeBucketName := env.Get("MINIO_GATEWAY_S3_PROBE_BUCKET", randString(60, rand.NewSource(time.Now().UnixNano()), "probe-bucket-sign-"))
-
+	fmt.Println("ProbeBucketName:", probeBucketName)
 	// Check if the provided keys are valid.
 	if _, err = clnt.BucketExists(context.Background(), probeBucketName); err != nil {
 		if miniogo.ToErrorResponse(err).Code != "AccessDenied" {
