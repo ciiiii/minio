@@ -27,17 +27,18 @@ import (
 	"time"
 
 	"github.com/minio/cli"
+
 	miniogo "github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/minio/minio-go/v7/pkg/tags"
-	minio "github.com/minio/minio/cmd"
-
 	"github.com/minio/minio-go/v7/pkg/encrypt"
 	"github.com/minio/minio-go/v7/pkg/s3utils"
+	"github.com/minio/minio-go/v7/pkg/tags"
+	minio "github.com/minio/minio/cmd"
 	xhttp "github.com/minio/minio/cmd/http"
 	"github.com/minio/minio/cmd/logger"
 	"github.com/minio/minio/pkg/auth"
 	"github.com/minio/minio/pkg/bucket/policy"
+	"github.com/minio/minio/pkg/env"
 )
 
 func init() {
@@ -219,7 +220,7 @@ func (g *S3) NewGatewayLayer(creds auth.Credentials) (minio.ObjectLayer, error) 
 		return nil, err
 	}
 
-	probeBucketName := randString(60, rand.NewSource(time.Now().UnixNano()), "probe-bucket-sign-")
+	probeBucketName := env.Get("MINIO_GATEWAY_S3_PROBE_BUCKET", randString(60, rand.NewSource(time.Now().UnixNano()), "probe-bucket-sign-"))
 
 	// Check if the provided keys are valid.
 	if _, err = clnt.BucketExists(context.Background(), probeBucketName); err != nil {
